@@ -15,28 +15,29 @@ class ThreadedKafkaLoggingHandler(logging.Handler):
         self.device_name = device_name
 
     def emit(self, record):
-        # Create and start a new thread for sending the log message
         threading.Thread(target=self._emit_in_thread, args=(record,)).start()
 
     def _emit_in_thread(self, record):
         try:
-            # Create a message key and value
-            current_time = datetime.datetime.now()
             key = f"{self.device_name}".encode('utf-8')
             message = self.format(record)
-
-            # Produce and flush the message
             self.producer.send(self.topic, key=key, value=message)
             self.producer.flush()
         except Exception:
             self.handleError(record)
+
+    def format(self, record):
+        log_entry = {
+            "level": record.levelname,
+            "timestamp": datetime.datetime.fromtimestamp(record.created).isoformat(),
+            "message": record.getMessage()
+        }
+        return json.dumps(log_entry)
 
 def get_threaded_kafka_logger(broker_address, topic, device_name):
     logger = logging.getLogger('ThreadedKafkaLogger')
     logger.setLevel(logging.INFO)
     if not logger.handlers:
         kafka_handler = ThreadedKafkaLoggingHandler(broker_address, topic, device_name)
-        formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
-        kafka_handler.setFormatter(formatter)
         logger.addHandler(kafka_handler)
     return logger
