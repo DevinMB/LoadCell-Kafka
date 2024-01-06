@@ -55,16 +55,13 @@ while True:
         if val < -600 and not is_weight_above_600:
             is_weight_above_600 = True
             hue.turn_on_light(light_id)
-            logger.info("{val} - Weight below -600, turning on light.")
+            logger.info(f"{val} - Weight below -600, turning on light.")
 
         elif val >= -600 and is_weight_above_600:
             is_weight_above_600 = False
             hue.turn_off_light(light_id)
-            logger.info("{val} - Weight above -600, turning off light.")
+            logger.info(f"{val} - Weight above -600, turning off light.")
 
-
-        # hx.power_down()
-        # hx.power_up()
         time.sleep(1)
 
     except (KeyboardInterrupt, SystemExit):
