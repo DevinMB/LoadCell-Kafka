@@ -29,7 +29,7 @@ class ThreadedKafkaLoggingHandler(logging.Handler):
     def format(self, record):
         log_entry = {
             "level": record.levelname,
-            "timestamp": datetime.datetime.fromtimestamp(record.created).isoformat(),
+            "timestamp": int(record.created),
             "message": record.getMessage()
         }
         return json.dumps(log_entry)
