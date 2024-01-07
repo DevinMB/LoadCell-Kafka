@@ -32,7 +32,7 @@ class ThreadedKafkaLoggingHandler(logging.Handler):
             "timestamp": int(record.created),
             "message": record.getMessage()
         }
-        return json.dumps(log_entry)
+        return log_entry
 
 def get_threaded_kafka_logger(broker_address, topic, device_name):
     logger = logging.getLogger('ThreadedKafkaLogger')
