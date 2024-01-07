@@ -2,10 +2,13 @@ from kafka import KafkaConsumer
 import json
 from message_handler import create_message_object
 from datetime import timedelta
+from dotenv import load_dotenv
+import os
 
+load_dotenv()
 
 # Kafka Consumer Configuration
-bootstrap_servers = ['192.168.1.250:9092']  # Replace with your Kafka server addresses
+bootstrap_servers = [os.getenv('BROKER')]  # Replace with your Kafka server addresses
 topic_name = 'log-topic'  # Replace with your topic name
 
 # Create a Kafka Consumer
