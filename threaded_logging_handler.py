@@ -9,7 +9,7 @@ class ThreadedKafkaLoggingHandler(logging.Handler):
         super().__init__()
         self.producer = KafkaProducer(
             bootstrap_servers=[broker_address],
-            value_serializer=lambda m: json.dumps(m).encode('ascii')
+            value_serializer=lambda m: json.dumps(m).encode('utf-8')
         )
         self.topic = topic
         self.device_name = device_name
