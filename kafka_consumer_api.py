@@ -14,8 +14,8 @@ load_dotenv()
 app = Flask(__name__)
 
 # Global variables to store sit times
-sit_counter = 0
-last_sit_time = 0
+global_last_sit_time = 0
+global_total_sit_time = 0
 data_lock = Lock()
 
 def seconds_to_dhms(seconds):
@@ -43,7 +43,7 @@ def kafka_consumer_thread():
     topic_name,
     bootstrap_servers=bootstrap_servers,
     auto_offset_reset='earliest',  # Start from the earliest messages
-    group_id='sit-counter-api',  # Consumer group ID
+    group_id='sit-counter-api-2',  # Consumer group ID
     enable_auto_commit=False
     )
 
