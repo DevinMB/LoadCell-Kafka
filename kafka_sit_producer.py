@@ -1,5 +1,5 @@
 import os
-from kafka import KafkaConsumer, KafkaProducer
+from kafka import KafkaConsumer, KafkaProducer, TopicPartition, OffsetAndMetadata
 from message_handler import create_message_object
 from dotenv import load_dotenv
 import json
@@ -16,7 +16,7 @@ consumer = KafkaConsumer(
     bootstrap_servers=bootstrap_servers,
     auto_offset_reset='earliest',
     group_id='sit-producer-1',
-    enable_auto_commit=True
+    enable_auto_commit=False
 )
 
 producer = KafkaProducer(
@@ -49,6 +49,10 @@ try:
                     sit_duration=difference_in_seconds
                     )
                     producer.send(producer_topic_name, key=key.encode('utf-8'), value=sit.to_json())
+                    
+                    tp = TopicPartition(message.topic, message.partition)
+                    offsets = {tp: OffsetAndMetadata(message.offset + 1, None)}
+                    consumer.commit(offsets=offsets)
                     
                     last_state_status = False   
 
