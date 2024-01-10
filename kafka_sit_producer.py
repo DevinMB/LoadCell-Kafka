@@ -27,6 +27,8 @@ producer = KafkaProducer(
 last_state_status = False
 last_state_time = 0
 
+print(f"Sit-Producer Running...")
+
 try:
     for message in consumer:
         key = message.key.decode('utf-8')
