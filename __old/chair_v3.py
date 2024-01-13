@@ -3,30 +3,30 @@ import time
 import sys
 import os
 from dotenv import load_dotenv
+from threaded_logging_handler import get_threaded_kafka_logger
+from hue_controller import HueController
 load_dotenv()
 
+EMULATE_HX711=False
+if not EMULATE_HX711:
+    import RPi.GPIO as GPIO
+    from hx711 import HX711
+else:
+    from emulated_hx711 import HX711
+
+referenceUnit = -441
+
 # Instantiate logger
-from threaded_logging_handler import get_threaded_kafka_logger
 BROKER = os.getenv('BROKER')
 device_name = "chair-sensor-1"
 topic = 'log-topic'
 logger = get_threaded_kafka_logger(BROKER, topic, device_name)
 
 # Instantiate the HueController
-from hue_controller import HueController
 BRIDGE_IP = os.getenv('BRIDGE_IP')
 USER_TOKEN = os.getenv('USER_TOKEN')
 light_id = 47  
 hue = HueController(BRIDGE_IP, USER_TOKEN)
-
-EMULATE_HX711=False
-referenceUnit = -441
-
-if not EMULATE_HX711:
-    import RPi.GPIO as GPIO
-    from hx711 import HX711
-else:
-    from emulated_hx711 import HX711
 
 def cleanAndExit():
     logger.info("Cleaning up and exiting.")

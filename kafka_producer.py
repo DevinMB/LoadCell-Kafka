@@ -1,6 +1,7 @@
 
 import datetime
 import os
+import logging
 from dotenv import load_dotenv
 from kafka import KafkaProducer
 import json
@@ -17,12 +18,11 @@ class KafkaProducerWrapper:
 
     def delivery_report(self, err, msg):
         if err is not None:
-            print('Message delivery failed: {}'.format(err))
+            logging.error('Message delivery failed: {}'.format(err))
         else:
-            print('Message delivered to {} [{}]'.format(msg.topic, msg.partition))
+            logging.info('Message delivered to {} [{}]'.format(msg.topic, msg.partition))
 
     def produce_message(self, topic, message):
-        current_time = datetime.datetime.now()
         key = f"{self.device_name}".encode('utf-8')
         future = self.producer.send(topic, key=key, value=message)
         # Block for 'synchronous' sends
@@ -34,12 +34,12 @@ class KafkaProducerWrapper:
         finally:
             self.producer.flush()
 
-# Usage
-broker = os.getenv('BROKER')
-device_name = "Macbook-Pro"
-topic = 'test-topic'
+# # Usage
+# broker = os.getenv('BROKER')
+# device_name = "Macbook-Pro"
+# topic = 'test-topic'
 
-producer = KafkaProducerWrapper(broker, device_name)
-producer.produce_message(topic, 'Nice, environment variable worked :)')
+# producer = KafkaProducerWrapper(broker, device_name)
+# producer.produce_message(topic, 'Nice, environment variable worked :)')
 
 
