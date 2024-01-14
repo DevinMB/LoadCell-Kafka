@@ -1,5 +1,8 @@
 from datetime import datetime, timedelta
 import pytz
+import time
+import json
+import logging
 
 class Sit:
     def __init__(self, start_epoch, end_epoch, device_id, sit_duration, avg_value):
@@ -42,3 +45,29 @@ class Sit:
             "time_bucket": self.time_bucket,
             "avg_value": self.avg_value
         }
+    
+    @classmethod
+    def from_json(cls, json_str):
+        try:
+            data = json.loads(json_str)
+
+            # Check for required keys
+            required_keys = ['device_id']
+            if not all(key in data for key in required_keys):
+                raise ValueError("JSON object does not have all required keys for a 'sit object'")
+
+            # Extracting data from JSON
+            start_epoch = data.get('start_timestamp', int(time.time()))
+            end_epoch = data.get('start_timestamp', int(time.time()))
+            device_id = data['device_id']
+            sit_duration = data['sit_duration']
+            avg_value = data.get('avg_value')
+
+            # Create a new SensorData instance
+            sit = cls(start_epoch, end_epoch, device_id, sit_duration, avg_value)
+            return sit
+
+        except (json.JSONDecodeError, KeyError, ValueError) as e:
+            logging.error(f"Error processing JSON: {e}")
+            return None
+    
