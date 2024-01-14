@@ -22,9 +22,15 @@ class SensorData:
         return data
     
     @classmethod
-    def from_json(cls, json_str):
+    def from_json(cls, json_input):
         try:
-            data = json.loads(json_str)
+            # Check if json_input is a string and convert to dictionary if it is
+            if isinstance(json_input, str):
+                data = json.loads(json_input)
+            elif isinstance(json_input, dict):
+                data = json_input
+            else:
+                raise TypeError("Input must be a JSON string or a dictionary")
 
             # Check for required keys
             required_keys = ['deviceId', 'sitStatus']
@@ -42,7 +48,7 @@ class SensorData:
             sensor_data.timestamp = timestamp  
             return sensor_data
 
-        except (json.JSONDecodeError, KeyError, ValueError) as e:
+        except (json.JSONDecodeError, KeyError, ValueError, TypeError) as e:
             logging.error(f"Error processing JSON: {e}")
             return None
     

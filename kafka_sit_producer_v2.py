@@ -4,6 +4,7 @@ from dotenv import load_dotenv
 import json
 from sit_handler import Sit
 from sensor_data import SensorData
+from kafka_producer_v2 import KafkaProducerWrapper
 
 load_dotenv()
 
@@ -23,6 +24,7 @@ def process_message(message, last_status, last_time, producer, consumer):
 
         elif not message_object.sit_status and last_status: 
             print(f"Person detected getting up at {message_object.timestamp}")
+            print(f"Producing sit record..")
             difference_in_seconds = message_object.timestamp - last_time
 
             # Produce a sit object to the sit topic
@@ -33,7 +35,7 @@ def process_message(message, last_status, last_time, producer, consumer):
                 sit_duration=difference_in_seconds,
                 avg_value=message_object.avg_value
             )
-            producer.send(producer_topic_name, key=key.encode('utf-8'), value=sit.to_json())
+            producer.produce_message(producer_topic_name, key=key, value=sit.to_json())
 
             tp = TopicPartition(message.topic, message.partition)
             offsets = {tp: OffsetAndMetadata(message.offset + 1, None)}
@@ -52,10 +54,7 @@ def start_consumer():
         enable_auto_commit=False
     )
 
-    producer = KafkaProducer(
-        bootstrap_servers=bootstrap_servers,
-        value_serializer=lambda v: json.dumps(v).encode('utf-8')
-    )
+    producer = KafkaProducerWrapper(bootstrap_servers)
 
     print(f"Sit-Producer Running...")
 
