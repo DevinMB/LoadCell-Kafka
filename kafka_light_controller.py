@@ -1,5 +1,6 @@
 import os
-from kafka import KafkaConsumer
+from kafka import KafkaConsumer, TopicPartition
+from kafka.errors import KafkaTimeoutError
 from sit_handler import Sit
 from sensor_data import SensorData
 from hue_controller import HueController
@@ -34,6 +35,13 @@ total_sit_aggregator = KafkaConsumer(
     enable_auto_commit=False
 )
 
+# Get end offset for Sits Aggregator
+partition = 0  # Assuming there is only one partition and it's partition 0
+tp = TopicPartition(sit_topic, partition)
+end_offset = total_sit_aggregator.end_offsets([tp])[tp]
+
+
+timeout_duration = 10  #seconds
 sit_counter = 0
 
 # Aggregate sit counts
@@ -41,14 +49,32 @@ try:
     for message in total_sit_aggregator:
         key = message.key.decode('utf-8')
         sit = Sit.from_json(message.value.decode('utf-8'))
-
+        current_offset = message.offset
+        
         if key == 'chair-sensor-1' and sit is not None:
             sit_counter += 1
             sit_counter = process_sit_count(sit_counter)
+        
+        if current_offset >= end_offset - 1:
+            print("Reached end of the available messages, moving on.")
+            break
 finally:
     total_sit_aggregator.close()
 
-print(f"Aggregated total of {sit_counter} sits. Now reading from live sits...")
+
+print(f"Aggregated total of {sit_counter} sits.")
+
+if sit_counter >= 100: 
+    if sit_counter == 100:
+        sit_counter = 0
+        print(f"Sit counter reset to 0. Suprise upcoming at next 100 sits.")
+    else: 
+        sit_counter = sit_counter % 100
+        print(f"Sit counter reset to {sit_counter}. Suprise at next 100 sits.")
+else:
+    print("Suprise upcoming at 100 sits.")
+
+print(f"Now reading from live sits...")
 
 # Live Sits Consumer
 live_sit_consumer = KafkaConsumer(
