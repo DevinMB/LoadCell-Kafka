@@ -14,10 +14,12 @@ class SensorData:
         data = {
             "timestamp": self.timestamp,
             "deviceId": self.device_id,
-            "sitStatus": self.sit_status,
-            "avgValue": self.avg_value
+            "sitStatus": self.sit_status
         }
-        return json.dumps({k: v for k, v in data.items() if v is not None})
+        if self.avg_value is not None:
+            data["avgValue"] = self.avg_value
+
+        return data
     
     @classmethod
     def from_json(cls, json_str):
