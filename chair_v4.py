@@ -55,13 +55,13 @@ while True:
         # Check if the weight crosses the threshold and update the flag
         if val < -600 and not is_weight_above_600:
             is_weight_above_600 = True
-            sensorRead = SensorData(device_name, is_weight_above_600)
-            producer.produce_message(topic, sensorRead.to_json)
+            sensorRead = SensorData(device_name, is_weight_above_600) 
+            producer.produce_message(topic, sensorRead.to_json())
             
         elif val >= -600 and is_weight_above_600:
             is_weight_above_600 = False
             sensorRead = SensorData(device_name, is_weight_above_600, avg_value)
-            producer.produce_message(topic, sensorRead.to_json)
+            producer.produce_message(topic, sensorRead.to_json())
             avg_value=None
             total_weight=0
             readings_count=0
