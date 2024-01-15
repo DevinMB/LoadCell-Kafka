@@ -48,19 +48,18 @@ class SitDataManager:
             "night_sits": 0,
             "total_sits": 0
         }
-        with self.lock:
-            for sit in self.sit_events:
-                if sit.device_id == device_name:
-                    last_sit = {
-                        "duration": Utility.seconds_to_dhms(sit.sit_duration),
-                        "timestamp": Utility.format_timestamp(sit.start_timestamp)
-                    }
-                    if sit.sit_duration > max_sit["duration"]: 
-                        max_sit = {"duration": sit.sit_duration, "timestamp": Utility.format_timestamp(sit.start_timestamp)}
-                    
-                    sit_counter = self.increment_sit_counter(sit_counter, sit.start_timestamp)
+        for sit in self.sit_events:
+            if sit.device_id == device_name:
+                last_sit = {
+                    "duration": Utility.seconds_to_dhms(sit.sit_duration),
+                    "timestamp": Utility.format_timestamp(sit.start_timestamp)
+                }
+                if sit.sit_duration > max_sit["duration"]: 
+                    max_sit = {"duration": sit.sit_duration, "timestamp": Utility.format_timestamp(sit.start_timestamp)}
+                
+                sit_counter = self.increment_sit_counter(sit_counter, sit.start_timestamp)
 
-                    total_sit_time += sit.sit_duration
+                total_sit_time += sit.sit_duration
             
             # for sit in self.sit_events:
                 # print(sit.to_json())

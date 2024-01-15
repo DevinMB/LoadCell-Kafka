@@ -8,7 +8,7 @@ import logging
 from sensor_data import SensorData
 from sit_data_manager import SitDataManager
 
-logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
+# logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
 
 # Load environment variables
 load_dotenv()
