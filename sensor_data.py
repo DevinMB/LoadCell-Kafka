@@ -1,7 +1,8 @@
 import json
 import time
 import logging
-
+from flask import jsonify
+from utility import Utility
 
 class SensorData:
     def __init__(self, device_id, sit_status, avg_value=None):
@@ -21,6 +22,18 @@ class SensorData:
 
         return data
     
+    def to_status(self):
+        if self.sit_status:
+            return {
+                "currently_sitting": self.sit_status,
+                "sat_down_at": Utility.format_timestamp(self.timestamp),
+                "current_sit_duration": Utility.seconds_to_dhms(self.timestamp - int(time.time()))
+            }
+        else:
+            return {
+                "currently_sitting": self.sit_status
+            }
+
     @classmethod
     def from_json(cls, json_input):
         try:

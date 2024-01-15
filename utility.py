@@ -1,4 +1,6 @@
-from datetime import timedelta
+from datetime import timedelta, datetime
+import pytz
+
 
 class Utility:
     @staticmethod
@@ -11,3 +13,9 @@ class Utility:
             "minutes": (td.seconds // 60) % 60,
             "seconds": td.seconds % 60
         }
+    
+    @staticmethod
+    def format_timestamp(timestamp):
+        utc_time = datetime.utcfromtimestamp(timestamp)
+        eastern = pytz.timezone('America/Detroit')
+        return utc_time.replace(tzinfo=pytz.utc).astimezone(eastern).strftime('%Y-%m-%d %I:%M:%S %p %Z')

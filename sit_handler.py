@@ -5,7 +5,7 @@ import json
 import logging
 
 class Sit:
-    def __init__(self, start_epoch, end_epoch, device_id, sit_duration, avg_value):
+    def __init__(self, start_epoch, end_epoch, device_id, sit_duration, avg_value=None):
         self.start_timestamp = start_epoch
         self.end_timestamp = end_epoch
         self.device_id = device_id
@@ -57,8 +57,8 @@ class Sit:
                 raise ValueError("JSON object does not have all required keys for a 'sit object'")
 
             # Extracting data from JSON
-            start_epoch = data.get('start_timestamp', int(time.time()))
-            end_epoch = data.get('start_timestamp', int(time.time()))
+            start_epoch = data.get('start_timestamp')
+            end_epoch = data.get('end_timestamp')
             device_id = data['device_id']
             sit_duration = data['sit_duration']
             avg_value = data.get('avg_value')
