@@ -63,7 +63,6 @@ class SitDataManager:
             
             # for sit in self.sit_events:
                 # print(sit.to_json())
-
         return {
             "currentSitStatus": self.current_sit_status,
             "lastSit": last_sit,
