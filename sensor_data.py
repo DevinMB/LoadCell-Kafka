@@ -26,8 +26,7 @@ class SensorData:
         if self.sit_status:
             return {
                 "currently_sitting": self.sit_status,
-                "sat_down_at": Utility.format_timestamp(self.timestamp),
-                "current_sit_duration": Utility.seconds_to_dhms(self.timestamp - int(time.time()))
+                "sat_down_at": Utility.format_timestamp(self.timestamp)
             }
         else:
             return {
