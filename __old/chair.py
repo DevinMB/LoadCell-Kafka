@@ -1,3 +1,4 @@
+import os
 #! /usr/bin/python2
 
 import time
@@ -19,7 +20,7 @@ from hue_controller import HueController
 
 # Instantiate the HueController
 BRIDGE_IP = '192.168.1.46'
-USER_TOKEN = 'BplzC08YY96lJDa8IT8EjaW9KcvvU87Ubn68il7u'
+USER_TOKEN = os.environ["HUE_USER_TOKEN"]
 light_id = 47  # Replace with your specific light ID
 hue = HueController(BRIDGE_IP, USER_TOKEN)
 
